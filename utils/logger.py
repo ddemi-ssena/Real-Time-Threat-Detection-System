@@ -1,5 +1,6 @@
 import datetime
 import os
+import cv2
 
 def log_threat(object_name, confidence):
     """
