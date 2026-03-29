@@ -6,6 +6,7 @@ from modules.object_detector import ObjectDetector
 from modules.hand_tracker import HandTracker
 from modules.threat_analyzer import ThreatAnalyzer
 from utils.logger import log_threat, save_evidence, start_video_recording
+from utils.notifier import send_telegram_alert
 
 # Ses motoru
 engine = pyttsx3.init()
@@ -56,7 +57,14 @@ def main():
             conf = threats[0]["confidence"]
 
             log_threat(obj_name, conf)
-            save_evidence(frame, obj_name)
+            img_filename = save_evidence(frame, obj_name)
+
+            # TELEGRAM BİLDİRİMİ GÖNDER (Asenkron - Kamera kasmasın diye)
+            threading.Thread(
+                target=send_telegram_alert,
+                args=(img_filename, f"🚨 DİKKAT! Tehlikeli Nesne: {obj_name.upper()} (Güven: %{int(conf*100)})"),
+                daemon=True
+            ).start()
 
             # VIDEO KAYDI BAŞLAT
             video_out, video_name = start_video_recording(w, h)

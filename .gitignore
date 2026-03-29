@@ -5,3 +5,6 @@ evidences/*.jpg
 evidences/*.avi
 .vscode/
 *.pt
+
+# Environment Variables
+.env
